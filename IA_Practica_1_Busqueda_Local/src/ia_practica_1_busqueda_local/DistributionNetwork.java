@@ -1,5 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
+
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -20,7 +20,7 @@ public class DistributionNetwork {
     /* Variables for State Data Structure */
     private static CentrosDatos mCenters;
     private static Sensores mSensors;
-    
+
     private final Connection[] mNetwork;
     
     /* Constructor */
@@ -35,6 +35,7 @@ public class DistributionNetwork {
         
         // Generate a new initial solution
     }
+
     
     public DistributionNetwork(DistributionNetwork net) {
         mNetwork = net.getNetwork().clone();
@@ -75,8 +76,8 @@ public class DistributionNetwork {
     public Connection[] getNetwork() {
         return mNetwork;
     }
-    
-    public boolean canReceiveConnection(int source, int target) {
+    //Kosmas:removed source parameter, it is not used here.    
+    public boolean canReceiveConnection(int target) {
         Connection c = mNetwork[target];
         return (target < mSensors.size()) ? (c.getConnections() < 3) : (c.getConnections() < 25);
     }
