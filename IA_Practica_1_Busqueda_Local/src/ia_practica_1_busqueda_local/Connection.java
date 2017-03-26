@@ -47,4 +47,8 @@ public class Connection {
     public void removeConnectionFrom(Integer from) {
         mFrom.remove(from);
     }
+    
+    public Integer getConnectionFromIndex(int index) {
+        return mFrom.get(index);
+    }
 }
