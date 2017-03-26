@@ -21,7 +21,7 @@ public class IA_Practica_1_Busqueda_Local {
      */
     public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        DistributionNetwork network = new DistributionNetwork(100, 1234, 4, 1234);
+        DistributionNetwork network = new DistributionNetwork(100, 4321, 4, 1234);
         
         /*
         Problem p = new Problem(network,

@@ -10,6 +10,7 @@ import IA.Red.Sensores;
 import IA.Red.Centro;
 import IA.Red.Sensor;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -134,5 +135,73 @@ public class DistributionNetwork {
     public boolean canReceiveConnection(int target) {
         Connection c = mNetwork[target];
         return (target < mSensors.size()) ? (c.getConnections() < 3) : (c.getConnections() < 25);
+    }
+    
+    private void generateInitialSolution() {
+        // First proposition for an Initial Solution: Fixed Assignment
+        // Sensors, in the order they are generated, will be assigned to the centers, also in their generated order
+        // Once all centers can't receive anymore connections, sensors will start to be assigned to other sensors in the same default order
+        
+        int s = 0;
+        
+        // Assign sensors to centers
+        for (int c = mSensors.size(); c < mNetwork.length && s < mSensors.size(); ++c) {
+            // Connect 25 sensors to center (c - mSensors.size)
+            for (int l = 0; l < 25 && s < mSensors.size(); ++l, ++s) {
+                mNetwork[s].setConnectionTo(c);
+                mNetwork[c].addConnectionFrom(s);
+            }
+        }
+        
+        // Assign sensors to sensors
+        for (int tarS = 0; s < mSensors.size(); ++tarS) {
+            // Connect 3 sensors to sensor tarS
+            for (int l = 0; l < 3 && s < mSensors.size(); ++l, ++s) {
+                mNetwork[s].setConnectionTo(tarS);
+                mNetwork[tarS].addConnectionFrom(s);
+            }
+        }
+    }
+    
+    private void generateInitialSolutionSec() {
+        // This method will assign sensors to other random sensors or centers
+        Random rng = new Random();
+        
+        // Pick sensors in order
+        // Pick a random center
+        // If the center doesn't have space, then connect the sensor to another sensor connected to the center
+        // Else If the center has sensors connected and space available 
+        //     -> 50/50 to connect to the center or pick a random sensor
+        //   ^ Applies equally for the sensor chosen if is the case
+        // Else connect the sensor to the center
+        
+        for (int s = 0; s < mSensors.size(); ++s)
+            stablishRandomConnection(s, rng.nextInt(mCenters.size()) + mSensors.size(), rng);
+    }
+    
+    private void stablishRandomConnection(int source, int target, Random rng) {
+        if (!canReceiveConnection(target)) {
+            // If the target can't receive more connections we know there are "children"
+            // so we try to add source to one of them
+            int next = rng.nextInt(mNetwork[target].getConnections());
+            stablishRandomConnection(source, mNetwork[target].getConnectionFromIndex(next), rng);
+        }
+        else if (mNetwork[target].getConnections() > 0) {
+            // If the target can receive connections, but also has "children"
+            // then we generate a random boolean to know if we add source to target or one of its children
+            if (rng.nextBoolean()) {
+                int next = rng.nextInt(mNetwork[target].getConnections());
+                stablishRandomConnection(source, mNetwork[target].getConnectionFromIndex(next), rng);
+            }
+            else {
+                mNetwork[source].setConnectionTo(target);
+                mNetwork[target].addConnectionFrom(source);
+            }
+        }
+        else {
+            // Finally the target can receive connections and doesn't have children, we add source to it
+            mNetwork[source].setConnectionTo(target);
+            mNetwork[target].addConnectionFrom(source);
+        }
     }
 }

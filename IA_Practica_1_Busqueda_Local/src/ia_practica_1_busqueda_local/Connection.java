@@ -12,10 +12,11 @@ import java.util.ArrayList;
  */
 public class Connection {
     private int mToIndex;
-    private ArrayList<Integer> mFrom;
+    private final ArrayList<Integer> mFrom;
     
     public Connection() {
         mToIndex = -1;
+        mFrom = new ArrayList();
     }
     
     public Connection(Connection c) {
@@ -45,5 +46,9 @@ public class Connection {
     
     public void removeConnectionFrom(Integer from) {
         mFrom.remove(from);
+    }
+    
+    public Integer getConnectionFromIndex(int index) {
+        return mFrom.get(index);
     }
 }

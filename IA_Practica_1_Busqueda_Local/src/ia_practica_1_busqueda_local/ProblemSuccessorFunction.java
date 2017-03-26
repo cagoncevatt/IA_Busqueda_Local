@@ -27,9 +27,9 @@ public class ProblemSuccessorFunction implements SuccessorFunction{
         DistributionNetwork oldState = (DistributionNetwork) state;
 	Connection[] connections= oldState.getNetwork();
 	int src;
-	int size=connections.size;               //total number of components
-	int nSensors = oldState.mSensors.size(); //number of sensors
-	int possible[size];                      //array which is used to mark the possible
+	int size=connections.length;               //total number of components
+	int nSensors = oldState.getSensors().size(); //number of sensors
+	int[] possible = new int[size];                      //array which is used to mark the possible
 						 //acceptors of the node
 	//we check the nodes that can receive another edge
 	for (int i=0;i<size;i++){
@@ -42,7 +42,7 @@ public class ProblemSuccessorFunction implements SuccessorFunction{
 	for (src=0; src<nSensors; src++) {
 		int target;
 		markImpossibleConnections(src,connections,possible);
-		addNewStates(src,connections,possible,possible_size,retVal);
+		addNewStates(src,connections,possible,size,retVal,oldState);
 	}		
         // Some code here
         // Generate successors based operators, for Simulated Annealing will need another way to generate the successors
@@ -50,7 +50,7 @@ public class ProblemSuccessorFunction implements SuccessorFunction{
         return retVal;
     }
 
-    markImpossibleConnections(int father,Connection[] connections,int[] possible) {
+    private void markImpossibleConnections(int father,Connection[] connections,int[] possible) {
 
 	ArrayList<Integer> children = connections[father].getFromConnections();
 	//iterator 
@@ -63,7 +63,7 @@ public class ProblemSuccessorFunction implements SuccessorFunction{
 	}
     }
    
-    addNewStates(int src, Connection[] connections,int[] possible,int size, ArrayList retVal, DistributionNetwork oldState) {
+    private void addNewStates(int src, Connection[] connections,int[] possible,int size, ArrayList retVal, DistributionNetwork oldState) {
     
 	int dst;	
 	for (dst=0; dst<size; dst++) {
