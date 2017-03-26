@@ -81,4 +81,30 @@ public class DistributionNetwork {
         Connection c = mNetwork[target];
         return (target < mSensors.size()) ? (c.getConnections() < 3) : (c.getConnections() < 25);
     }
+    
+    private void generateInitialSolution() {
+        // First proposition for an Initial Solution: Fixed Assignment
+        // Sensors, in the order they are generated, will be assigned to the centers, also in their generated order
+        // Once all centers can't receive anymore connections, sensors will start to be assigned to other sensors in the same default order
+        
+        int s = 0;
+        
+        // Assign sensors to centers
+        for (int c = mSensors.size(); c < mNetwork.length && s < mSensors.size(); ++c) {
+            // Connect 25 sensors to center (c - mSensors.size)
+            for (int l = 0; l < 25 && s < mSensors.size(); ++l, ++s) {
+                mNetwork[s].setConnectionTo(c);
+                mNetwork[c].addConnectionFrom(s);
+            }
+        }
+        
+        // Assign sensors to sensors
+        for (int tarS = 0; s < mSensors.size(); ++tarS) {
+            // Connect 3 sensors to sensor tarS
+            for (int l = 0; l < 3 && s < mSensors.size(); ++l, ++s) {
+                mNetwork[s].setConnectionTo(tarS);
+                mNetwork[tarS].addConnectionFrom(s);
+            }
+        }
+    }
 }
