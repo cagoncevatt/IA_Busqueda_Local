@@ -16,7 +16,25 @@ import java.util.ArrayList;
  * @author Ale
  */
 public class DistributionNetwork {
-    
+   
+
+    class costAndData {
+	double cost;
+	int data;
+	public double getCost() {
+		return cost;
+	}
+	public int getData() {
+		return data;
+	}
+	public void setCost(double c) {
+		cost=c;
+	}
+	public void setData(int d) {
+		data=d;
+	}
+    }
+ 
     /* Variables for State Data Structure */
     private static CentrosDatos mCenters;
     private static Sensores mSensors;
@@ -55,9 +73,45 @@ public class DistributionNetwork {
 
     /* Heuristic function */
     public double heuristic() {
+
+	double retVal=0.0;
+	//first we calculate the data.
+	int i;
+	int data=0;
+	cost=0;
+	for (i=0; i<mCenters.size(); i++) {
+	    int dataOfCenter=0;
+	    ArrayList<Integer> fromConnections = mNetwork[mSensors.size()+node].getConnections();
+	    for (i=0; i<fromConnections.size(); i++) {
+       	        int child = fromConnections.get(i);
+		calculateDataReceivedBy(i,receivedData,cost);
+		dataOfCenter+=receivedData;
+	  		
+	    } 
+	    data += (dataOfCenter > 150) ? 150 : dataOfCenter;
+	}
         // Calc data stored and data lost in this solution, aswell as total cost
-        return 0;
+        return retVal;
     }
+
+    private costAndData calculateDataReceivedBy(int node) {
+	
+	double retVal;
+   	int data=( (int) mSensors.at(node).getCapacidad() );	
+	ArrayList<Integer> fromConnections = mNetwork[node].getConnections();
+	for (i=0; i<fromConnections.size(); i++) {
+       	    int child = fromConnections.at(i);
+	    datum= calculateDataReceivedBy(child); //datum is singular of data :P (como forum-fora)
+	    distance = distance(node,child);
+	    data+= datum;
+	    cost+= distance*distance*datum;
+	}
+	
+	//now we have to determine the type of data center, and cut the data that cannot be stored :(
+	int maxData = 3*((int) mSensors.at(node).getCapacidad());
+	retVal = (data > maxData ) ? maxData : data;			
+	return retVal;
+   }	
 
     /* Goal test */
     public boolean isGoal() {
