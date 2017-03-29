@@ -56,7 +56,23 @@ public class DistributionNetwork {
 		cFrom.setConnectionTo(to);
 	}
 
-	// Maybe a SwapEdge with other sensor
+	// SwapEdge / SwapConnection
+        // s1 and s2 must be sensors index (0..mSensors.size() - 1)
+        public void swapConnection(int s1, int s2) {
+            Connection c1 = mNetwork[s1];
+            Connection c2 = mNetwork[s2];
+            
+            int c1To = c1.getConnectionToIndex();
+            int c2To = c2.getConnectionToIndex();
+            
+            mNetwork[c1To].removeConnectionFrom(s1);
+            mNetwork[c1To].addConnectionFrom(s2);
+            mNetwork[c2To].removeConnectionFrom(s2);
+            mNetwork[c2To].addConnectionFrom(s1);
+            
+            c1.setConnectionTo(c2To);
+            c2.setConnectionTo(c1To);
+        }
 
 	/* Heuristic function */
 	public double heuristic() {
