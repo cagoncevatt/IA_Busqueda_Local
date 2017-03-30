@@ -20,8 +20,16 @@ public class Connection {
     }
     
     public Connection(Connection c) {
+    	
+    	//kosmas fixed copy constructor
         mToIndex = c.getConnectionToIndex();
-        mFrom = c.getFromConnections();
+        //mFrom = c.getFromConnections(); 
+        //the above is a very bad idea!!!
+        mFrom = new ArrayList();
+        ArrayList<Integer> fromConns = c.getFromConnections();
+        for (int i=0;i<fromConns.size();i++){
+        	mFrom.add(fromConns.get(i));
+        }
     }
     
     public void setConnectionTo(int index) {

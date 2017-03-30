@@ -37,13 +37,36 @@ public class DistributionNetwork {
 
 		for (int i = 0; i < mNetwork.length; ++i)
 			mNetwork[i] = new Connection();
-
+		
+		generateInitialSolution();
+		
+		//for (int i = 0; i < mNetwork.length; ++i)
+		//	System.out.println(mNetwork[i].getConnections());
+		
+		ProblemSuccessorFunction  psf = new ProblemSuccessorFunction();
+		psf.getSuccessors((Object)this);
+		
+		System.out.println(heuristic());
 		// Generate a new initial solution
 	}
 
 
 	public DistributionNetwork(DistributionNetwork net) {
-		mNetwork = net.getNetwork().clone();
+		
+		//kosmas: fixed copy constructor.
+		Connection[] oldNetwork = net.getNetwork(); //.clone();
+		mNetwork = new Connection[net.getNetwork().length];
+		for (int i = 0; i < mNetwork.length; ++i) {
+			mNetwork[i] = new Connection();
+		    mNetwork[i].setConnectionTo(oldNetwork[i].getConnectionToIndex());
+		    ArrayList<Integer> fromConnections = oldNetwork[i].getFromConnections();
+		    int j;
+		    for (j=0;j<fromConnections.size();j++) {
+		    	mNetwork[i].addConnectionFrom(fromConnections.get(j));
+		    }
+		}
+		
+		
 	}
 
 	/* Operator */
@@ -56,23 +79,22 @@ public class DistributionNetwork {
 		cFrom.setConnectionTo(to);
 	}
 
-	// SwapEdge / SwapConnection
-        // s1 and s2 must be sensors index (0..mSensors.size() - 1)
-        public void swapConnection(int s1, int s2) {
-            Connection c1 = mNetwork[s1];
-            Connection c2 = mNetwork[s2];
-            
-            int c1To = c1.getConnectionToIndex();
-            int c2To = c2.getConnectionToIndex();
-            
-            mNetwork[c1To].removeConnectionFrom(s1);
-            mNetwork[c1To].addConnectionFrom(s2);
-            mNetwork[c2To].removeConnectionFrom(s2);
-            mNetwork[c2To].addConnectionFrom(s1);
-            
-            c1.setConnectionTo(c2To);
-            c2.setConnectionTo(c1To);
-        }
+	public void swapConnection(int s1, int s2) {
+        Connection c1 = mNetwork[s1];
+        Connection c2 = mNetwork[s2];
+
+        int c1To = c1.getConnectionToIndex();
+        int c2To = c2.getConnectionToIndex();
+
+        mNetwork[c1To].removeConnectionFrom(s1);
+        mNetwork[c1To].addConnectionFrom(s2);
+        mNetwork[c2To].removeConnectionFrom(s2);
+        mNetwork[c2To].addConnectionFrom(s1);
+
+        c1.setConnectionTo(c2To);
+        c2.setConnectionTo(c1To);
+    }
+
 
 	/* Heuristic function */
 	public double heuristic() {
@@ -85,9 +107,10 @@ public class DistributionNetwork {
 		mTotalCost= 0;
 		mTotalData=0;
 
-		for (c=0; c<mCenters.size(); c++) { //for each data centera...
+		for (c=0; c<mCenters.size(); c++) { //for each data center...
 			int dataOfCenter=0;  //..we will compute the data it receives...
-			ArrayList<Integer> fromConnections = mNetwork[mSensors.size()+c].getFromConnections(); 
+			ArrayList<Integer> 
+			fromConnections = mNetwork[mSensors.size()+c].getFromConnections(); 
 			for (conn=0; conn<fromConnections.size(); conn++) { //for every sensor attached to it...
 				int child = fromConnections.get(conn);    //...count how much data is received by it.
 				int receivedData = calculateDataReceived(c,child);
@@ -102,6 +125,7 @@ public class DistributionNetwork {
 		return retVal;
 	}
 
+
 	private int calculateDataReceived(int src, int dst) {
 
 		///here, we return the amount of data that is transmitted to the src.
@@ -115,8 +139,9 @@ public class DistributionNetwork {
 
 		ArrayList<Integer> fromConnections = mNetwork[dst].getFromConnections(); //get connections
 		int i;
-		int child = fromConnections.get(0);
-		for (i=0; i<fromConnections.size(); i++, child=fromConnections.get(i)) {
+		
+		for (i=0; i<fromConnections.size(); i++) {
+			int child=fromConnections.get(i);
 			int datum= calculateDataReceived(dst,child); //datum is singular of data :P (like forum-fora)
 			data+= datum;
 		}
