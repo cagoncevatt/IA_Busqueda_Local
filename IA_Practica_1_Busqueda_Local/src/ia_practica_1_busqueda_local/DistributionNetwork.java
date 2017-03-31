@@ -36,37 +36,12 @@ public class DistributionNetwork {
 		mNetwork = new Connection[centers + sensors];
 
 
-		for (int i = 0; i < mNetwork.length; ++i){
-			if (i < sensors) {
-				System.out.println("Coords of sensor " + i + " (" + mSensors.get(i).getCoordX() + "," + mSensors.get(i).getCoordY());
-			} else {
-				System.out.println("Coords of center " + (i-sensors) + " (" + mCenters.get(i-sensors).getCoordX() + "," + mCenters.get(i-sensors).getCoordY());
-			}
-			mNetwork[i] = new Connection();
-		}
-
-		generateInitialSolutionSec();
-
-		System.out.println(distanceSquared(0,0));
-		System.out.println(distanceSquared(0,4));
-		System.out.println(distanceSquared(1,5));
-		System.out.println(distanceSquared(2,6));
-		System.out.println(distanceSquared(3,7));
-		//System.out.println(mSensors.size());
-
-		//System.out.println(mCenters.size());
-
-
-
-
-		//for (int i = 0; i < mNetwork.length; ++i)
-		//	System.out.println(mNetwork[i].getConnections());
-
-		ProblemSuccessorFunction  psf = new ProblemSuccessorFunction();
-		psf.getSuccessors((Object)this);
-
-		System.out.println(heuristic());
 		// Generate a new initial solution
+		//the one we don't want is commented out.
+		//generateInitialSolution(); 
+		generateInitialSolutionSec();
+		//value of the heuristic for before first step.
+		System.out.println(heuristic());
 	}
 
 
