@@ -23,8 +23,8 @@ public class DistributionNetwork {
 	/* Variables for State Data Structure */
 	private static CentrosDatos mCenters;
 	private static Sensores mSensors;
-	private double mTotalData;
-	private double mTotalCost;
+	private double mTotalData=0;
+	private double mTotalCost=0;
 
 	private final Connection[] mNetwork;
 
@@ -35,38 +35,57 @@ public class DistributionNetwork {
 
 		mNetwork = new Connection[centers + sensors];
 
-		for (int i = 0; i < mNetwork.length; ++i)
+
+		for (int i = 0; i < mNetwork.length; ++i){
+			if (i < sensors) {
+				System.out.println("Coords of sensor " + i + " (" + mSensors.get(i).getCoordX() + "," + mSensors.get(i).getCoordY());
+			} else {
+				System.out.println("Coords of center " + (i-sensors) + " (" + mCenters.get(i-sensors).getCoordX() + "," + mCenters.get(i-sensors).getCoordY());
+			}
 			mNetwork[i] = new Connection();
-		
-		generateInitialSolution();
-		
+		}
+
+		generateInitialSolutionSec();
+
+		System.out.println(distanceSquared(0,0));
+		System.out.println(distanceSquared(0,4));
+		System.out.println(distanceSquared(1,5));
+		System.out.println(distanceSquared(2,6));
+		System.out.println(distanceSquared(3,7));
+		//System.out.println(mSensors.size());
+
+		//System.out.println(mCenters.size());
+
+
+
+
 		//for (int i = 0; i < mNetwork.length; ++i)
 		//	System.out.println(mNetwork[i].getConnections());
-		
+
 		ProblemSuccessorFunction  psf = new ProblemSuccessorFunction();
 		psf.getSuccessors((Object)this);
-		
+
 		System.out.println(heuristic());
 		// Generate a new initial solution
 	}
 
 
 	public DistributionNetwork(DistributionNetwork net) {
-		
+
 		//kosmas: fixed copy constructor.
 		Connection[] oldNetwork = net.getNetwork(); //.clone();
 		mNetwork = new Connection[net.getNetwork().length];
 		for (int i = 0; i < mNetwork.length; ++i) {
 			mNetwork[i] = new Connection();
-		    mNetwork[i].setConnectionTo(oldNetwork[i].getConnectionToIndex());
-		    ArrayList<Integer> fromConnections = oldNetwork[i].getFromConnections();
-		    int j;
-		    for (j=0;j<fromConnections.size();j++) {
-		    	mNetwork[i].addConnectionFrom(fromConnections.get(j));
-		    }
+			mNetwork[i].setConnectionTo(oldNetwork[i].getConnectionToIndex());
+			ArrayList<Integer> fromConnections = oldNetwork[i].getFromConnections();
+			int j;
+			for (j=0;j<fromConnections.size();j++) {
+				mNetwork[i].addConnectionFrom(fromConnections.get(j));
+			}
 		}
-		
-		
+
+
 	}
 
 	/* Operator */
@@ -80,27 +99,27 @@ public class DistributionNetwork {
 	}
 
 	public void swapConnection(int s1, int s2) {
-        Connection c1 = mNetwork[s1];
-        Connection c2 = mNetwork[s2];
+		Connection c1 = mNetwork[s1];
+		Connection c2 = mNetwork[s2];
 
-        int c1To = c1.getConnectionToIndex();
-        int c2To = c2.getConnectionToIndex();
+		int c1To = c1.getConnectionToIndex();
+		int c2To = c2.getConnectionToIndex();
 
-        mNetwork[c1To].removeConnectionFrom(s1);
-        mNetwork[c1To].addConnectionFrom(s2);
-        mNetwork[c2To].removeConnectionFrom(s2);
-        mNetwork[c2To].addConnectionFrom(s1);
+		mNetwork[c1To].removeConnectionFrom(s1);
+		mNetwork[c1To].addConnectionFrom(s2);
+		mNetwork[c2To].removeConnectionFrom(s2);
+		mNetwork[c2To].addConnectionFrom(s1);
 
-        c1.setConnectionTo(c2To);
-        c2.setConnectionTo(c1To);
-    }
+		c1.setConnectionTo(c2To);
+		c2.setConnectionTo(c1To);
+	}
 
 
 	/* Heuristic function */
 	public double heuristic() {
 
 		double retVal=0.0;
-		int c,conn,data=0;
+		int c,conn;
 		//These two are the only ingredients of our heuristic. We will calculate them now.
 		//However, note that it is not necessary to compute the value of the heuristic of every successor;
 		//It is much faster to just compute the difference from the old state.
@@ -108,55 +127,70 @@ public class DistributionNetwork {
 		mTotalData=0;
 
 		for (c=0; c<mCenters.size(); c++) { //for each data center...
-			int dataOfCenter=0;  //..we will compute the data it receives...
-			ArrayList<Integer> 
-			fromConnections = mNetwork[mSensors.size()+c].getFromConnections(); 
+			int dataOfCenter=0;                //..we will compute the data it receives...
+			ArrayList<Integer> fromConnections = mNetwork[mSensors.size()+c].getFromConnections(); 
+
 			for (conn=0; conn<fromConnections.size(); conn++) { //for every sensor attached to it...
+
 				int child = fromConnections.get(conn);    //...count how much data is received by it.
-				int receivedData = calculateDataReceived(c,child);
+				double receivedData = calculateDataReceived(child,c+mSensors.size());
 				dataOfCenter+=receivedData;
+
 
 			} 
 			dataOfCenter = (dataOfCenter > 150) ? 150 : dataOfCenter;
-			mTotalData+=dataOfCenter;
+			mTotalData= mTotalData+dataOfCenter;
 		}
+		
+		//Calculate the cost now:
+		
+		
+		
+
 		//Now we can calculate the heuristic.
-		retVal = mTotalCost/mTotalData; //TODO: Think of a better Heuristic
+		retVal = mTotalCost/mTotalData;//mTotalData; //TODO: Think of a better Heuristic
+		//System.out.println(retVal);
 		return retVal;
 	}
 
 
-	private int calculateDataReceived(int src, int dst) {
+	private double calculateDataReceived(int src, int dst) {
 
-		///here, we return the amount of data that is transmitted to the src.
+		double distancesq = distanceSquared(src,dst); 
+		
+		///here, we return the amount of data that is transmitted to the dst.
 		//Also we calculate the cost of the transmission, which is dist^2*data.
 
 
-		int retVal; //the amount of data that will be delivered to src.
+		double retVal; //the amount of data that will be delivered to src.
 
-		int data=( (int) mSensors.get(dst).getCapacidad() ); //the data that is read by the sensor itself.
+		double data=(mSensors.get(src).getCapacidad());
+		//the data that is read by the sensor itself.
 		//now we compute the data received by this sensor:
 
-		ArrayList<Integer> fromConnections = mNetwork[dst].getFromConnections(); //get connections
+		ArrayList<Integer> fromConnections = mNetwork[src].getFromConnections(); //get connections
 		int i;
-		
+
 		for (i=0; i<fromConnections.size(); i++) {
 			int child=fromConnections.get(i);
-			int datum= calculateDataReceived(dst,child); //datum is singular of data :P (like forum-fora)
+			double datum= calculateDataReceived(child,src); //datum is singular of data :P (like forum-fora)
 			data+= datum;
 		}
-		//now we have to cut the data that could not be stored in the dst
-		int maxData = 3*((int) mSensors.get(dst).getCapacidad());
+		//now we have to cut the data that could not be stored in the src
+
+		double maxData = 3*( mSensors.get(src).getCapacidad());
 		retVal = (data > maxData ) ? maxData : data;
 		//now we will pay for the data of this transmission.
-		double distance = distance(src,dst); 
-		mTotalCost+= distance*distance*retVal;
+		
+		mTotalCost+= distancesq*retVal;
 
 		return retVal;
 	}	
 
-	private double distance(int node1,int node2) {
+	private double distanceSquared(int node1,int node2) {
 		double x1,y1,x2,y2;
+
+
 		if (node1 < mSensors.size() ) {
 			x1 = (double) mSensors.get(node1).getCoordX();
 			y1 = (double) mSensors.get(node1).getCoordY();
@@ -173,7 +207,7 @@ public class DistributionNetwork {
 			y2 = (double) mCenters.get(node2-mSensors.size()).getCoordY();
 		}
 
-		return Math.sqrt((((x1-x2)*(x1-x2)) + ((y1-y2)*(y1-y2))));
+		return ((x1-x2)*(x1-x2)) + ((y1-y2)*(y1-y2));
 
 	}
 
@@ -267,4 +301,13 @@ public class DistributionNetwork {
 			mNetwork[target].addConnectionFrom(source);
 		}
 	}
+
+
+	public double getCost() {
+		return mTotalCost;
+	}
+	public double getData() {
+		return mTotalData; 
+	}
 }
+
