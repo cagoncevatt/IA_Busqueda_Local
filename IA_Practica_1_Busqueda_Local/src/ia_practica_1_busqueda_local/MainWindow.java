@@ -22,7 +22,6 @@ import javax.swing.JOptionPane;
  * @author Ale
  */
 public class MainWindow extends javax.swing.JFrame {
-
     /**
      * Creates new form MainWindow
      */
@@ -90,6 +89,15 @@ public class MainWindow extends javax.swing.JFrame {
                                 k = Integer.parseInt(jTextFieldK.getText());
                                 lambda = Integer.parseInt(jTextFieldLambda.getText());
                             }
+                            
+                            // Take the solution and draw it!
+                            /*((GraphCanvas)graphCanvasResult).addNode("C0", 0, 0, GraphCanvas.NodeType.CENTER);
+                            ((GraphCanvas)graphCanvasResult).addNode("S1", 1, 1, GraphCanvas.NodeType.SENSOR);
+                            ((GraphCanvas)graphCanvasResult).addNode("C1", 2, 2, GraphCanvas.NodeType.CENTER);
+                            ((GraphCanvas)graphCanvasResult).addNode("C2", 50, 50, GraphCanvas.NodeType.CENTER);
+                            ((GraphCanvas)graphCanvasResult).addNode("S2", 100, 100, GraphCanvas.NodeType.SENSOR);
+                            ((GraphCanvas)graphCanvasResult).addEdge(0, 4); from 0 to 4
+                            ((GraphCanvas)graphCanvasResult).addEdge(4, 0); from 4 to 0*/
                         }
                         else {
                             JOptionPane.showMessageDialog(frame, "All input parameters for SA are obligatory:\n\t> Max. amount of Iterations.\n\t> Amount of Iterations per Step.\n\t> K-value.\n\t> Lambda value.",
@@ -144,8 +152,11 @@ public class MainWindow extends javax.swing.JFrame {
         jTextFieldItStep = new javax.swing.JTextField();
         jTextFieldK = new javax.swing.JTextField();
         jTextFieldLambda = new javax.swing.JTextField();
-        jButtonExec = new javax.swing.JButton();
         jButtonClose = new javax.swing.JButton();
+        jButtonExec = new javax.swing.JButton();
+        jPanelResults = new javax.swing.JPanel();
+        jPanelCont = new javax.swing.JPanel();
+        graphCanvasResult = new GraphCanvas();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AI - Local Search");
@@ -213,7 +224,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(jTextFieldCenters, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelInputLayout.createSequentialGroup()
                         .addComponent(jLabelSensorSeed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jTextFieldSensorsSeed, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelInputLayout.createSequentialGroup()
                         .addComponent(jLabelCenterSeed)
@@ -306,8 +317,6 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jTextFieldLambda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        jButtonExec.setText("Execute");
-
         jButtonClose.setText("Close");
         jButtonClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -315,36 +324,93 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jButtonExec.setText("Execute");
+
+        jPanelResults.setBorder(javax.swing.BorderFactory.createTitledBorder("Results"));
+
+        jPanelCont.setBackground(new java.awt.Color(255, 255, 255));
+
+        graphCanvasResult.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout graphCanvasResultLayout = new javax.swing.GroupLayout(graphCanvasResult);
+        graphCanvasResult.setLayout(graphCanvasResultLayout);
+        graphCanvasResultLayout.setHorizontalGroup(
+            graphCanvasResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 648, Short.MAX_VALUE)
+        );
+        graphCanvasResultLayout.setVerticalGroup(
+            graphCanvasResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 422, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanelContLayout = new javax.swing.GroupLayout(jPanelCont);
+        jPanelCont.setLayout(jPanelContLayout);
+        jPanelContLayout.setHorizontalGroup(
+            jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 668, Short.MAX_VALUE)
+            .addGroup(jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelContLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(graphCanvasResult, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        jPanelContLayout.setVerticalGroup(
+            jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelContLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(graphCanvasResult, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        javax.swing.GroupLayout jPanelResultsLayout = new javax.swing.GroupLayout(jPanelResults);
+        jPanelResults.setLayout(jPanelResultsLayout);
+        jPanelResultsLayout.setHorizontalGroup(
+            jPanelResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanelCont, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanelResultsLayout.setVerticalGroup(
+            jPanelResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanelCont, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanelInput, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelSA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelSearchTech, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanelSA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelSearchTech, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(167, 167, 167)
                         .addComponent(jButtonClose)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonExec)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonExec, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanelSearchTech, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelSA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonExec)
-                    .addComponent(jButtonClose))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanelSearchTech, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanelInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanelSA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonExec)
+                            .addComponent(jButtonClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 13, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -400,6 +466,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroupTech;
+    private javax.swing.JPanel graphCanvasResult;
     private javax.swing.JButton jButtonClose;
     private javax.swing.JButton jButtonExec;
     private javax.swing.JLabel jLabelCenter;
@@ -410,7 +477,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelMaxIt;
     private javax.swing.JLabel jLabelSensorSeed;
     private javax.swing.JLabel jLabelSensors;
+    private javax.swing.JPanel jPanelCont;
     private javax.swing.JPanel jPanelInput;
+    private javax.swing.JPanel jPanelResults;
     private javax.swing.JPanel jPanelSA;
     private javax.swing.JPanel jPanelSearchTech;
     private javax.swing.JRadioButton jRadioButtonHC;
