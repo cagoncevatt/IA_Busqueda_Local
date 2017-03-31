@@ -70,7 +70,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 && !jTextFieldItStep.getText().isEmpty() && !jTextFieldK.getText().isEmpty()
                                 && !jTextFieldLambda.getText().isEmpty())) {
 
-                            DistributionNetwork network = new DistributionNetwork(c, cSeed, s, sSeed);
+                            DistributionNetwork network = new DistributionNetwork(s, sSeed, c, cSeed);
 
                             if (jRadioButtonHC.isSelected()) {
                                 Problem p = new Problem(network,
