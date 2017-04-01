@@ -22,7 +22,7 @@ public class GraphCanvas extends JPanel {
         SENSOR, CENTER
     }
     
-    private final int ARR_SIZE = 5;
+    private final int ARR_SIZE = 4;
     private final ArrayList<Node> nodes;
     private final ArrayList<Edge> edges;
     

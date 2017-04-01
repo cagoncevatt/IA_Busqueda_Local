@@ -16,6 +16,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import IA.Red.CentrosDatos;
+import IA.Red.Sensores;
+import IA.Red.Centro;
+import IA.Red.Sensor;
+import java.util.List;
 
 /**
  *
@@ -80,6 +85,24 @@ public class MainWindow extends javax.swing.JFrame {
 
                                 Search alg = new HillClimbingSearch();
                                 SearchAgent agent = new SearchAgent(p, alg);
+                                
+                                DistributionNetwork net = (DistributionNetwork) alg.getGoalState();
+                                CentrosDatos centers = net.getDataCenters();
+                                Sensores sensors = net.getSensors();
+                                Connection[] connections = net.getNetwork();
+                                
+                                ((GraphCanvas)graphCanvasResult).clearGraph();
+                                
+                                for (int i = 0; i < s; ++i)
+                                    ((GraphCanvas)graphCanvasResult).addNode("S" + (i + 1), sensors.get(i).getCoordX(), sensors.get(i).getCoordY(), GraphCanvas.NodeType.SENSOR);
+                                
+                                for (int i = 0; i < c; ++i)
+                                    ((GraphCanvas)graphCanvasResult).addNode("C" + (i + 1), centers.get(i).getCoordX(), centers.get(i).getCoordY(), GraphCanvas.NodeType.CENTER);
+                                
+                                for (int i = 0; i < s; ++i)
+                                    ((GraphCanvas)graphCanvasResult).addEdge(i, connections[i].getConnectionToIndex());
+                                
+                                ((GraphCanvas)graphCanvasResult).repaint();
                             }
                             else {
                                 int maxIt, it, k, lambda;
