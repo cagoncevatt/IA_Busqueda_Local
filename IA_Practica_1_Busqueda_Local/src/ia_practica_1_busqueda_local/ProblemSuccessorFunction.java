@@ -33,7 +33,12 @@ public class ProblemSuccessorFunction implements SuccessorFunction{
 		int size=connections.length;               //total number of components
 		int nSensors = oldState.getSensors().size(); //number of sensors
 		int[] possible = new int[size];                      //array which is used to mark the possible
+		
 		//acceptors of the node
+		
+		
+
+		
 		//we check the nodes that can receive another edge
 		for (int i=0;i<size;i++){
 			if (oldState.canReceiveConnection(i)) possible[i]=0;
@@ -68,7 +73,7 @@ public class ProblemSuccessorFunction implements SuccessorFunction{
 			if (possible[child]== 0) {
 				possible[child]=1; //set it to be impossible
 			}else if (possible[child]==1) {
-				System.out.println("INFINITE LOOP");
+				System.out.println("ERROR: INFINITE LOOP");
 				return;
 			}
 			
@@ -83,15 +88,19 @@ public class ProblemSuccessorFunction implements SuccessorFunction{
 			if (possible[dst]==0) {
 				DistributionNetwork newState = new DistributionNetwork(oldState);
 				newState.changeConnection(src,dst);
-				String succStr = "operador que pone el arista (" + src + "->" + dst + ")" + newState.toString();
+				newState.heuristic(); //para calcular the cost and the data
+				//String sss = heuristicc.toString;
+				
+				String succStr = "operador que pone el arista (" + src + "->" + dst + ")" + "With cost " + newState.getCost() + " and data " + newState.getData();
 				retVal.add(new Successor(succStr,newState));
+				
 			}else if (possible[dst]==1) {	
 				//we must set it back to zero, to be used by the next source
 				possible[dst]=0;
 			}
 		}
 	}
-
+ 
 
 
 
