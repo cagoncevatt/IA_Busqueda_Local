@@ -65,6 +65,7 @@ public class MainWindow extends javax.swing.JFrame {
                             && !jTextFieldSensors.getText().isEmpty() && !jTextFieldSensorsSeed.getText().isEmpty()) {
 
                         int c, cSeed, s, sSeed;
+                        long startTime, endTime;
                         
                         c = Integer.parseInt(jTextFieldCenters.getText());
                         cSeed = Integer.parseInt(jTextFieldCentersSeed.getText());
@@ -75,6 +76,8 @@ public class MainWindow extends javax.swing.JFrame {
                                 && !jTextFieldItStep.getText().isEmpty() && !jTextFieldK.getText().isEmpty()
                                 && !jTextFieldLambda.getText().isEmpty())) {
 
+                            startTime = System.nanoTime();
+                            
                             DistributionNetwork network = new DistributionNetwork(s, sSeed, c, cSeed);
 
                             if (jRadioButtonHC.isSelected()) {
@@ -86,10 +89,16 @@ public class MainWindow extends javax.swing.JFrame {
                                 Search alg = new HillClimbingSearch();
                                 SearchAgent agent = new SearchAgent(p, alg);
                                 
+                                endTime = System.nanoTime();
+                                
                                 DistributionNetwork net = (DistributionNetwork) alg.getGoalState();
                                 CentrosDatos centers = net.getDataCenters();
                                 Sensores sensors = net.getSensors();
                                 Connection[] connections = net.getNetwork();
+                                
+                                jLabelTimeRes.setText(String.valueOf((endTime - startTime) / 1000000) + " ms");
+                                jLabelTransmRes.setText(String.valueOf(net.getData()) + " MB/s");
+                                jLabelCostRes.setText(String.valueOf(net.getCost()));
                                 
                                 ((GraphCanvas)graphCanvasResult).clearGraph();
                                 
@@ -111,16 +120,39 @@ public class MainWindow extends javax.swing.JFrame {
                                 it = Integer.parseInt(jTextFieldItStep.getText());
                                 k = Integer.parseInt(jTextFieldK.getText());
                                 lambda = Integer.parseInt(jTextFieldLambda.getText());
+                                
+                                Problem p = new Problem(network,
+                                        new ProblemSuccessorFunction(),
+                                        new ProblemGoalTest(),
+                                        new ProblemHeuristicFunction());
+
+                                Search alg = new SimulatedAnnealingSearch(maxIt, it, k, lambda);
+                                SearchAgent agent = new SearchAgent(p, alg);
+                                
+                                endTime = System.nanoTime();
+                                
+                                DistributionNetwork net = (DistributionNetwork) alg.getGoalState();
+                                CentrosDatos centers = net.getDataCenters();
+                                Sensores sensors = net.getSensors();
+                                Connection[] connections = net.getNetwork();
+                                
+                                jLabelTimeRes.setText(String.valueOf((endTime - startTime) / 1000000) + " ms");
+                                jLabelTransmRes.setText(String.valueOf(net.getData()) + " MB/s");
+                                jLabelCostRes.setText(String.valueOf(net.getCost()));
+                                
+                                ((GraphCanvas)graphCanvasResult).clearGraph();
+                                
+                                for (int i = 0; i < s; ++i)
+                                    ((GraphCanvas)graphCanvasResult).addNode("S" + (i + 1), sensors.get(i).getCoordX(), sensors.get(i).getCoordY(), GraphCanvas.NodeType.SENSOR);
+                                
+                                for (int i = 0; i < c; ++i)
+                                    ((GraphCanvas)graphCanvasResult).addNode("C" + (i + 1), centers.get(i).getCoordX(), centers.get(i).getCoordY(), GraphCanvas.NodeType.CENTER);
+                                
+                                for (int i = 0; i < s; ++i)
+                                    ((GraphCanvas)graphCanvasResult).addEdge(i, connections[i].getConnectionToIndex());
+                                
+                                ((GraphCanvas)graphCanvasResult).repaint();
                             }
-                            
-                            // Take the solution and draw it!
-                            /*((GraphCanvas)graphCanvasResult).addNode("C0", 0, 0, GraphCanvas.NodeType.CENTER);
-                            ((GraphCanvas)graphCanvasResult).addNode("S1", 1, 1, GraphCanvas.NodeType.SENSOR);
-                            ((GraphCanvas)graphCanvasResult).addNode("C1", 2, 2, GraphCanvas.NodeType.CENTER);
-                            ((GraphCanvas)graphCanvasResult).addNode("C2", 50, 50, GraphCanvas.NodeType.CENTER);
-                            ((GraphCanvas)graphCanvasResult).addNode("S2", 100, 100, GraphCanvas.NodeType.SENSOR);
-                            ((GraphCanvas)graphCanvasResult).addEdge(0, 4); from 0 to 4
-                            ((GraphCanvas)graphCanvasResult).addEdge(4, 0); from 4 to 0*/
                         }
                         else {
                             JOptionPane.showMessageDialog(frame, "All input parameters for SA are obligatory:\n\t> Max. amount of Iterations.\n\t> Amount of Iterations per Step.\n\t> K-value.\n\t> Lambda value.",
@@ -180,6 +212,14 @@ public class MainWindow extends javax.swing.JFrame {
         jPanelResults = new javax.swing.JPanel();
         jPanelCont = new javax.swing.JPanel();
         graphCanvasResult = new GraphCanvas();
+        jLabelTransm = new javax.swing.JLabel();
+        jLabelTransmRes = new javax.swing.JLabel();
+        jLabelCost = new javax.swing.JLabel();
+        jLabelCostRes = new javax.swing.JLabel();
+        jLabelLost = new javax.swing.JLabel();
+        jLabelLostRes = new javax.swing.JLabel();
+        jLabelTime = new javax.swing.JLabel();
+        jLabelTimeRes = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AI - Local Search");
@@ -398,6 +438,14 @@ public class MainWindow extends javax.swing.JFrame {
             .addComponent(jPanelCont, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
+        jLabelTransm.setText("Data Transmitted: ");
+
+        jLabelCost.setText("Cost:");
+
+        jLabelLost.setText("Data Lost:");
+
+        jLabelTime.setText("Execution Time:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -411,17 +459,37 @@ public class MainWindow extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(167, 167, 167)
                         .addComponent(jButtonClose)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonExec, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(jPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabelTransm)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelTransmRes)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabelCost)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelCostRes)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabelLost)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelLostRes)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabelTime)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelTimeRes)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanelSearchTech, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -432,9 +500,18 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonExec)
-                            .addComponent(jButtonClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 13, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(jButtonClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelTransm)
+                    .addComponent(jLabelTransmRes)
+                    .addComponent(jLabelCost)
+                    .addComponent(jLabelCostRes)
+                    .addComponent(jLabelLost)
+                    .addComponent(jLabelLostRes)
+                    .addComponent(jLabelTime)
+                    .addComponent(jLabelTimeRes))
+                .addGap(30, 30, 30))
         );
 
         pack();
@@ -494,12 +571,20 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButtonExec;
     private javax.swing.JLabel jLabelCenter;
     private javax.swing.JLabel jLabelCenterSeed;
+    private javax.swing.JLabel jLabelCost;
+    private javax.swing.JLabel jLabelCostRes;
     private javax.swing.JLabel jLabelItStep;
     private javax.swing.JLabel jLabelK;
     private javax.swing.JLabel jLabelLambda;
+    private javax.swing.JLabel jLabelLost;
+    private javax.swing.JLabel jLabelLostRes;
     private javax.swing.JLabel jLabelMaxIt;
     private javax.swing.JLabel jLabelSensorSeed;
     private javax.swing.JLabel jLabelSensors;
+    private javax.swing.JLabel jLabelTime;
+    private javax.swing.JLabel jLabelTimeRes;
+    private javax.swing.JLabel jLabelTransm;
+    private javax.swing.JLabel jLabelTransmRes;
     private javax.swing.JPanel jPanelCont;
     private javax.swing.JPanel jPanelInput;
     private javax.swing.JPanel jPanelResults;

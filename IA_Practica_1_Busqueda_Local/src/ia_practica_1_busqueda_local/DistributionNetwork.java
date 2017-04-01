@@ -35,6 +35,8 @@ public class DistributionNetwork {
 
 		mNetwork = new Connection[centers + sensors];
 
+                for (int i = 0; i < mNetwork.length; ++i)
+                    mNetwork[i] = new Connection();
 
 		// Generate a new initial solution
 		//the one we don't want is commented out.
