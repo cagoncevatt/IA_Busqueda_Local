@@ -26,14 +26,15 @@ public class DistributionNetwork {
 	private double mTotalData=0;
 	private double mTotalCost=0;
         private double mDataLost = 0;
+        private static int mHeuristic;
 
 	private final Connection[] mNetwork;
 
 	/* Constructor */
-	public DistributionNetwork(int sensors, int sensorSeed, int centers, int centerSeed) {
+	public DistributionNetwork(int sensors, int sensorSeed, int centers, int centerSeed, boolean fixedInit, int heuristic) {
 		mCenters = new CentrosDatos(centers, centerSeed);
 		mSensors = new Sensores(sensors, sensorSeed);
-
+                mHeuristic = heuristic;
 		mNetwork = new Connection[centers + sensors];
 
                 for (int i = 0; i < mNetwork.length; ++i)
@@ -41,8 +42,11 @@ public class DistributionNetwork {
 
 		// Generate a new initial solution
 		//the one we don't want is commented out.
-		//generateInitialSolution(); 
-		generateInitialSolutionSec();
+                if (fixedInit)
+                    generateInitialSolution(); 
+                else
+                    generateInitialSolutionSec();
+                
 		//value of the heuristic for before first step.
 		System.out.println(heuristic());
 	}
@@ -129,11 +133,35 @@ public class DistributionNetwork {
 		
 
 		//Now we can calculate the heuristic.
-		retVal = mTotalCost/mTotalData;//mTotalData; //TODO: Think of a better Heuristic
+                switch (mHeuristic) {
+                    case 1:
+                        retVal = heuristic1();
+                        break;
+                        
+                    case 2:
+                        retVal = heuristic2();
+                        break;
+                        
+                    default:
+                        retVal = heuristic3();
+                        break;
+                }
+		
 		//System.out.println(retVal);
 		return retVal;
 	}
 
+        private double heuristic1() {
+            return mTotalCost / mTotalData;
+        }
+        
+        private double heuristic2() {
+            return mTotalCost / mTotalData;
+        }
+        
+        private double heuristic3() {
+            return mTotalCost / mTotalData;
+        }
 
 	private double calculateDataReceived(int src, int dst) {
 

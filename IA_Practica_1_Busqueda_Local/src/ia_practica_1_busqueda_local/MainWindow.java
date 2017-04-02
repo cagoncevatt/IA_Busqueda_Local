@@ -76,9 +76,13 @@ public class MainWindow extends javax.swing.JFrame {
                                 && !jTextFieldItStep.getText().isEmpty() && !jTextFieldK.getText().isEmpty()
                                 && !jTextFieldLambda.getText().isEmpty())) {
 
+                            boolean fixedInit = jRadioButtonInitFixed.isSelected();
+                            
+                            int heuristic = (jRadioButtonHeur1.isSelected()) ? 1 : ((jRadioButtonHeur2.isSelected()) ? 2 : 3);
+                            
                             startTime = System.nanoTime();
                             
-                            DistributionNetwork network = new DistributionNetwork(s, sSeed, c, cSeed);
+                            DistributionNetwork network = new DistributionNetwork(s, sSeed, c, cSeed, fixedInit, heuristic);
 
                             if (jRadioButtonHC.isSelected()) {
                                 Problem p = new Problem(network,
@@ -189,6 +193,8 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroupTech = new javax.swing.ButtonGroup();
+        buttonGroupInit = new javax.swing.ButtonGroup();
+        buttonGroupHeuristic = new javax.swing.ButtonGroup();
         jPanelSearchTech = new javax.swing.JPanel();
         jRadioButtonHC = new javax.swing.JRadioButton();
         jRadioButtonSA = new javax.swing.JRadioButton();
@@ -201,6 +207,9 @@ public class MainWindow extends javax.swing.JFrame {
         jTextFieldCentersSeed = new javax.swing.JTextField();
         jTextFieldSensors = new javax.swing.JTextField();
         jTextFieldSensorsSeed = new javax.swing.JTextField();
+        jLabelInit = new javax.swing.JLabel();
+        jRadioButtonInitFixed = new javax.swing.JRadioButton();
+        jRadioButtonInitRnd = new javax.swing.JRadioButton();
         jPanelSA = new javax.swing.JPanel();
         jLabelMaxIt = new javax.swing.JLabel();
         jLabelItStep = new javax.swing.JLabel();
@@ -210,8 +219,10 @@ public class MainWindow extends javax.swing.JFrame {
         jTextFieldItStep = new javax.swing.JTextField();
         jTextFieldK = new javax.swing.JTextField();
         jTextFieldLambda = new javax.swing.JTextField();
-        jButtonClose = new javax.swing.JButton();
-        jButtonExec = new javax.swing.JButton();
+        jPanelHeuristic = new javax.swing.JPanel();
+        jRadioButtonHeur1 = new javax.swing.JRadioButton();
+        jRadioButtonHeur2 = new javax.swing.JRadioButton();
+        jRadioButtonHeur3 = new javax.swing.JRadioButton();
         jPanelResults = new javax.swing.JPanel();
         jPanelCont = new javax.swing.JPanel();
         graphCanvasResult = new GraphCanvas();
@@ -223,6 +234,8 @@ public class MainWindow extends javax.swing.JFrame {
         jLabelLostRes = new javax.swing.JLabel();
         jLabelTime = new javax.swing.JLabel();
         jLabelTimeRes = new javax.swing.JLabel();
+        jButtonClose = new javax.swing.JButton();
+        jButtonExec = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AI - Local Search");
@@ -277,6 +290,15 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabelSensors.setText("Sensors:");
 
+        jLabelInit.setText("Initial Solution:");
+
+        buttonGroupInit.add(jRadioButtonInitFixed);
+        jRadioButtonInitFixed.setSelected(true);
+        jRadioButtonInitFixed.setText("Fixed Generation");
+
+        buttonGroupInit.add(jRadioButtonInitRnd);
+        jRadioButtonInitRnd.setText("Random Generation");
+
         javax.swing.GroupLayout jPanelInputLayout = new javax.swing.GroupLayout(jPanelInput);
         jPanelInput.setLayout(jPanelInputLayout);
         jPanelInputLayout.setHorizontalGroup(
@@ -290,7 +312,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(jTextFieldCenters, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelInputLayout.createSequentialGroup()
                         .addComponent(jLabelSensorSeed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
                         .addComponent(jTextFieldSensorsSeed, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelInputLayout.createSequentialGroup()
                         .addComponent(jLabelCenterSeed)
@@ -299,7 +321,14 @@ public class MainWindow extends javax.swing.JFrame {
                     .addGroup(jPanelInputLayout.createSequentialGroup()
                         .addComponent(jLabelSensors)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextFieldSensors, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextFieldSensors, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanelInputLayout.createSequentialGroup()
+                        .addComponent(jLabelInit)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanelInputLayout.createSequentialGroup()
+                        .addComponent(jRadioButtonInitFixed)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jRadioButtonInitRnd)))
                 .addContainerGap())
         );
         jPanelInputLayout.setVerticalGroup(
@@ -321,7 +350,12 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(jPanelInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelSensorSeed)
                     .addComponent(jTextFieldSensorsSeed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addComponent(jLabelInit)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanelInputLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButtonInitFixed)
+                    .addComponent(jRadioButtonInitRnd)))
         );
 
         jPanelSA.setBorder(javax.swing.BorderFactory.createTitledBorder("Simulated Annealing Parameters"));
@@ -383,14 +417,38 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jTextFieldLambda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        jButtonClose.setText("Close");
-        jButtonClose.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonCloseActionPerformed(evt);
-            }
-        });
+        jPanelHeuristic.setBorder(javax.swing.BorderFactory.createTitledBorder("Heuristic"));
 
-        jButtonExec.setText("Execute");
+        buttonGroupHeuristic.add(jRadioButtonHeur1);
+        jRadioButtonHeur1.setSelected(true);
+        jRadioButtonHeur1.setText("Heuristic 1");
+
+        buttonGroupHeuristic.add(jRadioButtonHeur2);
+        jRadioButtonHeur2.setText("Heuristic 2");
+
+        buttonGroupHeuristic.add(jRadioButtonHeur3);
+        jRadioButtonHeur3.setText("Heuristic 3");
+
+        javax.swing.GroupLayout jPanelHeuristicLayout = new javax.swing.GroupLayout(jPanelHeuristic);
+        jPanelHeuristic.setLayout(jPanelHeuristicLayout);
+        jPanelHeuristicLayout.setHorizontalGroup(
+            jPanelHeuristicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelHeuristicLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jRadioButtonHeur1)
+                .addGap(18, 18, 18)
+                .addComponent(jRadioButtonHeur2)
+                .addGap(18, 18, 18)
+                .addComponent(jRadioButtonHeur3)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanelHeuristicLayout.setVerticalGroup(
+            jPanelHeuristicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelHeuristicLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jRadioButtonHeur1)
+                .addComponent(jRadioButtonHeur2)
+                .addComponent(jRadioButtonHeur3))
+        );
 
         jPanelResults.setBorder(javax.swing.BorderFactory.createTitledBorder("Results"));
 
@@ -413,7 +471,7 @@ public class MainWindow extends javax.swing.JFrame {
         jPanelCont.setLayout(jPanelContLayout);
         jPanelContLayout.setHorizontalGroup(
             jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 668, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
             .addGroup(jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanelContLayout.createSequentialGroup()
                     .addContainerGap()
@@ -422,7 +480,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         jPanelContLayout.setVerticalGroup(
             jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 501, Short.MAX_VALUE)
             .addGroup(jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanelContLayout.createSequentialGroup()
                     .addContainerGap()
@@ -449,6 +507,15 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabelTime.setText("Execution Time:");
 
+        jButtonClose.setText("Close");
+        jButtonClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCloseActionPerformed(evt);
+            }
+        });
+
+        jButtonExec.setText("Execute");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -459,11 +526,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jPanelSA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanelInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanelSearchTech, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(167, 167, 167)
-                        .addComponent(jButtonClose)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButtonExec, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jPanelHeuristic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -482,39 +545,49 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabelTime)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelTimeRes)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabelTimeRes)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 197, Short.MAX_VALUE)
+                                .addComponent(jButtonClose)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonExec, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(jPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanelResults, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanelSearchTech, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanelInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanelSA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanelHeuristic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanelResults, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelTransm)
+                            .addComponent(jLabelTransmRes)
+                            .addComponent(jLabelCost)
+                            .addComponent(jLabelCostRes)
+                            .addComponent(jLabelLost)
+                            .addComponent(jLabelLostRes)
+                            .addComponent(jLabelTime)
+                            .addComponent(jLabelTimeRes))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonExec)
-                            .addComponent(jButtonClose, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelTransm)
-                    .addComponent(jLabelTransmRes)
-                    .addComponent(jLabelCost)
-                    .addComponent(jLabelCostRes)
-                    .addComponent(jLabelLost)
-                    .addComponent(jLabelLostRes)
-                    .addComponent(jLabelTime)
-                    .addComponent(jLabelTimeRes))
-                .addGap(30, 30, 30))
+                            .addComponent(jButtonClose))
+                        .addContainerGap())))
         );
 
         pack();
@@ -568,6 +641,8 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroupHeuristic;
+    private javax.swing.ButtonGroup buttonGroupInit;
     private javax.swing.ButtonGroup buttonGroupTech;
     private javax.swing.JPanel graphCanvasResult;
     private javax.swing.JButton jButtonClose;
@@ -576,6 +651,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelCenterSeed;
     private javax.swing.JLabel jLabelCost;
     private javax.swing.JLabel jLabelCostRes;
+    private javax.swing.JLabel jLabelInit;
     private javax.swing.JLabel jLabelItStep;
     private javax.swing.JLabel jLabelK;
     private javax.swing.JLabel jLabelLambda;
@@ -589,11 +665,17 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelTransm;
     private javax.swing.JLabel jLabelTransmRes;
     private javax.swing.JPanel jPanelCont;
+    private javax.swing.JPanel jPanelHeuristic;
     private javax.swing.JPanel jPanelInput;
     private javax.swing.JPanel jPanelResults;
     private javax.swing.JPanel jPanelSA;
     private javax.swing.JPanel jPanelSearchTech;
     private javax.swing.JRadioButton jRadioButtonHC;
+    private javax.swing.JRadioButton jRadioButtonHeur1;
+    private javax.swing.JRadioButton jRadioButtonHeur2;
+    private javax.swing.JRadioButton jRadioButtonHeur3;
+    private javax.swing.JRadioButton jRadioButtonInitFixed;
+    private javax.swing.JRadioButton jRadioButtonInitRnd;
     private javax.swing.JRadioButton jRadioButtonSA;
     private javax.swing.JTextField jTextFieldCenters;
     private javax.swing.JTextField jTextFieldCentersSeed;
