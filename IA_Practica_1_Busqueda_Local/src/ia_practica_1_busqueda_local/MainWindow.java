@@ -114,15 +114,16 @@ public class MainWindow extends javax.swing.JFrame {
                                 ((GraphCanvas)graphCanvasResult).repaint();
                             }
                             else {
-                                int maxIt, it, k, lambda;
+                                int maxIt, it, k;
+                                double lambda;
                                 
                                 maxIt = Integer.parseInt(jTextFieldMaxIt.getText());
                                 it = Integer.parseInt(jTextFieldItStep.getText());
                                 k = Integer.parseInt(jTextFieldK.getText());
-                                lambda = Integer.parseInt(jTextFieldLambda.getText());
+                                lambda = Double.parseDouble(jTextFieldLambda.getText());
                                 
                                 Problem p = new Problem(network,
-                                        new ProblemSuccessorFunction(),
+                                        new ProblemSuccessorFunctionSA(),
                                         new ProblemGoalTest(),
                                         new ProblemHeuristicFunction());
 
