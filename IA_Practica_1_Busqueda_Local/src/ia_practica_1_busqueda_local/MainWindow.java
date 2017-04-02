@@ -99,6 +99,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 jLabelTimeRes.setText(String.valueOf((endTime - startTime) / 1000000) + " ms");
                                 jLabelTransmRes.setText(String.valueOf(net.getData()) + " MB/s");
                                 jLabelCostRes.setText(String.valueOf(net.getCost()));
+                                jLabelLostRes.setText(String.valueOf(net.getLoss()) + " MB/s");
                                 
                                 ((GraphCanvas)graphCanvasResult).clearGraph();
                                 
@@ -140,6 +141,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 jLabelTimeRes.setText(String.valueOf((endTime - startTime) / 1000000) + " ms");
                                 jLabelTransmRes.setText(String.valueOf(net.getData()) + " MB/s");
                                 jLabelCostRes.setText(String.valueOf(net.getCost()));
+                                jLabelLostRes.setText(String.valueOf(net.getLoss()) + " MB/s");
                                 
                                 ((GraphCanvas)graphCanvasResult).clearGraph();
                                 

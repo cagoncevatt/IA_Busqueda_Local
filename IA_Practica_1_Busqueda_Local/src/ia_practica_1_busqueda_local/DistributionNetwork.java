@@ -25,6 +25,7 @@ public class DistributionNetwork {
 	private static Sensores mSensors;
 	private double mTotalData=0;
 	private double mTotalCost=0;
+        private double mDataLost = 0;
 
 	private final Connection[] mNetwork;
 
@@ -95,13 +96,14 @@ public class DistributionNetwork {
 	/* Heuristic function */
 	public double heuristic() {
 
-		double retVal=0.0;
+		double retVal;
 		int c,conn;
 		//These two are the only ingredients of our heuristic. We will calculate them now.
 		//However, note that it is not necessary to compute the value of the heuristic of every successor;
 		//It is much faster to just compute the difference from the old state.
 		mTotalCost= 0;
 		mTotalData=0;
+                mDataLost = 0;
 
 		for (c=0; c<mCenters.size(); c++) { //for each data center...
 			int dataOfCenter=0;                //..we will compute the data it receives...
@@ -114,14 +116,16 @@ public class DistributionNetwork {
 				dataOfCenter+=receivedData;
 
 
-			} 
-			dataOfCenter = (dataOfCenter > 150) ? 150 : dataOfCenter;
+			}
+                        if (dataOfCenter > 150) {
+                            mDataLost += (dataOfCenter - 150);
+                            dataOfCenter = 150;
+                        }
+                        
 			mTotalData= mTotalData+dataOfCenter;
 		}
 		
 		//Calculate the cost now:
-		
-		
 		
 
 		//Now we can calculate the heuristic.
@@ -156,7 +160,14 @@ public class DistributionNetwork {
 		//now we have to cut the data that could not be stored in the src
 
 		double maxData = 3*( mSensors.get(src).getCapacidad());
-		retVal = (data > maxData ) ? maxData : data;
+                
+                if (data > maxData) {
+                    mDataLost += data - maxData;
+                    retVal = maxData;
+                }
+                else
+                    retVal = data;
+                
 		//now we will pay for the data of this transmission.
 		
 		mTotalCost+= distancesq*retVal;
@@ -279,6 +290,9 @@ public class DistributionNetwork {
 		}
 	}
 
+        public double getLoss() {
+            return mDataLost;
+        }
 
 	public double getCost() {
 		return mTotalCost;
