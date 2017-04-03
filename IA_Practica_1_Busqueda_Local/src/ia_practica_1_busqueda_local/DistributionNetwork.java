@@ -152,15 +152,18 @@ public class DistributionNetwork {
 	}
 
         private double heuristic1() {
+            // Ratio, maximizes mTotalData and Minimizes mTotalCost
             return mTotalCost / mTotalData;
         }
         
         private double heuristic2() {
-            return mTotalCost / mTotalData;
+            // Like heuristic 1, but adds a penalty with the amount of data lost in the solution
+            return (mTotalCost / mTotalData) + mDataLost;
         }
         
         private double heuristic3() {
-            return mTotalCost / mTotalData;
+            // Try to minimize total cost and Minimize Data Lost (which implies maximizing data transmitted)
+            return mTotalCost + mDataLost;
         }
 
 	private double calculateDataReceived(int src, int dst) {
