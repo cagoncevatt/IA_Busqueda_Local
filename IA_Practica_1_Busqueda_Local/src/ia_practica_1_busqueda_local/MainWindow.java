@@ -487,7 +487,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         graphCanvasResultLayout.setVerticalGroup(
             graphCanvasResultLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 422, Short.MAX_VALUE)
+            .addGap(0, 547, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanelContLayout = new javax.swing.GroupLayout(jPanelCont);
@@ -503,7 +503,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         jPanelContLayout.setVerticalGroup(
             jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 493, Short.MAX_VALUE)
+            .addGap(0, 569, Short.MAX_VALUE)
             .addGroup(jPanelContLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanelContLayout.createSequentialGroup()
                     .addContainerGap()
@@ -519,7 +519,9 @@ public class MainWindow extends javax.swing.JFrame {
         );
         jPanelResultsLayout.setVerticalGroup(
             jPanelResultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanelCont, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanelResultsLayout.createSequentialGroup()
+                .addComponent(jPanelCont, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jLabelTransm.setText("Data Transmitted: ");
@@ -643,7 +645,7 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(jLabelLostRes)
                             .addComponent(jLabelTime)
                             .addComponent(jLabelTimeRes))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonExec)
                             .addComponent(jButtonClose))
